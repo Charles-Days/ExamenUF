@@ -1,24 +1,29 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    }
+
     stages {
         stage('Parando los servicios...') {
             steps {
                 sh '''
-                    docker compose -p exu2-cbdp down || true
+                    /usr/local/bin/docker compose -p exu2-cbdp down || true
                 '''
             }
         }
 
-        stage('Eliminando imágenes anteriores...') {
+        stage('Eliminando imagenes anteriores...') {
             steps {
                 sh '''
-                    docker images --filter "label=com.docker.compose.project=exu2-cbdp" -q | xargs -r docker rmi -f || echo "No hay imagenes por eliminar"
+                    /usr/local/bin/docker rmi client:v1.0.2 -f || true
+                    /usr/local/bin/docker rmi operations:v1.0.2 -f || true
                 '''
             }
         }
 
-        stage('Obteniendo actualización...') {
+        stage('Obteniendo actualizacion...') {
             steps {
                 checkout scm
             }
@@ -27,7 +32,8 @@ pipeline {
         stage('Construyendo y desplegando servicios...') {
             steps {
                 sh '''
-                    docker compose -p exu2-cbdp up --build -d
+                    cd $WORKSPACE
+                    /usr/local/bin/docker compose -p exu2-cbdp up --build -d
                 '''
             }
         }
@@ -35,7 +41,7 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline ejecutado con éxito'
+            echo 'Pipeline ejecutado con exito'
         }
 
         failure {
