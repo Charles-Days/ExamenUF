@@ -1,0 +1,30 @@
+services:
+  client:
+    image: client:v1.0.2
+    build:
+      context: ./Cliente
+      args:
+        API_HOST: localhost
+        API_PORT: 8086
+        API_BASE: /api/greeting
+    container_name: exu2-cliente
+    ports:
+      - "5173:80"
+    networks:
+      - exu2-cbdp-net
+    depends_on:
+      - operations
+
+  operations:
+    image: operations:v1.0.2
+    build:
+      context: ./Servidor
+    container_name: exu2-operaciones
+    ports:
+      - "8086:8080"
+    networks:
+      - exu2-cbdp-net
+
+networks:
+  exu2-cbdp-net:
+    external: true
