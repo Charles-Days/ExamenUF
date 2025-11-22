@@ -1,4 +1,3 @@
-# Etapa 1: Build
 FROM node:20 AS build
 
 WORKDIR /app
@@ -19,7 +18,6 @@ ENV VITE_API_BASE=$API_BASE
 
 RUN npm run build
 
-# Etapa 2: Servidor nginx
 FROM nginx:alpine
 
 COPY --from=build /app/dist /usr/share/nginx/html
